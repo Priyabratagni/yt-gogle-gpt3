@@ -1,0 +1,1017 @@
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8"></meta>
+
+<meta content="IE=edge" http-equiv="X-UA-Compatible"></meta>
+
+<meta content="width=device-width, initial-scale=1.0" name="viewport"></meta>
+
+<link href="style.css" rel="stylesheet"></link>
+
+<title>AI-Pretrained Solution Generator</title>
+
+</head>
+
+<body style="font-family: sans-serif;">
+
+<nav class="navbar" style="border-radius: 15PX;">
+
+    <div class="logo"><a style="color:white;" href="AI-PSG homepage.html">MAJOR PROJECT</a></div>
+
+<ul class="nav-links">
+
+<input id="checkbox_toggle" type="checkbox" />
+
+<label class="hamburger" for="checkbox_toggle">☰</label>
+
+<div class="menu">
+
+<li><a href="http://localhost:3000/">AI PSG</a></li>
+
+<li><a href="notes.html">NOTES</a></li>
+
+<li><a href="https://drive.google.com/file/d/1y---AHzWPbrz7UsRZ0Vi-zLzCFwk5Wi1/view?usp=sharing" target="_blank">Project Report</a></li>
+
+</div>
+
+</ul>
+
+</nav>
+
+  <nav style="background-color: #021C39; border-radius: 10PX;">
+
+<center><h2 style="color: white;">TITLE - AI-Pretrained Solution Generator</h2></center>
+
+</nav>
+
+  <hr>
+
+ 
+
+  <div>
+
+  <div class="container">
+
+    <h1>Pre-Trained Solution Generator</h1>
+
+    <input type="text" id="search-box" placeholder="Get results from text data...">
+
+    <button type="button" onclick="search()">Search</button>
+
+    <h2 id="answer-heading"></h2>
+
+    <p id="answer-text"></p>
+
+    <p id="error-message"></p>
+
+  </div>
+
+  <div class="container">
+
+    <center><form id="search-form">
+
+     
+
+      <center><input type="submit" id="search-btn" value="Search on Google & YouTube"></center>
+
+    </form></center>
+
+    <section id="google-results">
+
+      <h2>Google Results</h2>
+
+      <ul id="google-list"></ul>
+
+    </section>
+
+    <section id="youtube-results">
+
+      <h2>YouTube Results</h2>
+
+      <div id="youtube-grid"></div>
+
+    </section>
+
+  </div>
+
+  <style>
+
+  .container {
+
+  max-width: 1200px;
+
+  margin: 0 auto;
+
+  padding: 20px;
+
+}
+
+
+#search-form {
+
+  display: flex;
+
+  align-items: center;
+
+  margin-bottom: 20px;
+
+  margin-left: 10%;
+
+  margin-right: 50%;
+
+}
+
+
+
+
+#search-btn {
+
+  background-color: #021C39;
+
+  color: white;
+
+  padding: 14px 20px;
+
+  margin: 8px 0;
+
+  border: none;
+
+  border-radius: 4px;
+
+  cursor: pointer;
+
+  font-size: 1.2em;
+
+}
+
+
+#google-results {
+
+  margin-bottom: 40px;
+
+}
+
+
+#google-list {
+
+  list-style: none;
+
+  padding: 0;
+
+  margin: 0;
+
+}
+
+
+#google-list li {
+
+  margin-bottom: 20px;
+
+}
+
+
+#google-list h3 {
+
+  font-size: 18px;
+
+  margin-bottom: 5px;
+
+}
+
+
+#google-list p {
+
+  font-size: 14px;
+
+  margin-bottom: 5px;
+
+}
+
+
+#google-list a {
+
+  color: #000;
+
+  text-decoration: none;
+
+}
+
+
+#youtube-results {
+
+  margin-bottom: 40px;
+
+}
+
+
+#youtube-grid {
+
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+
+  grid-gap: 20px;
+
+}
+
+
+.youtube-item {
+
+  position: relative;
+
+}
+
+
+.youtube-item img {
+
+  width: 100%;
+
+  height: auto;
+
+}
+
+
+.youtube-item .play-btn {
+
+  position: absolute;
+
+  top: 50%;
+
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  font-size: 30px;
+
+  color: #fff;
+
+  cursor: pointer;
+
+}
+
+  </style>
+
+  <script>
+
+  // Get references to HTML elements
+
+const searchForm = document.getElementById('search-form');
+
+const searchBox = document.getElementById('search-box');
+
+const googleList = document.getElementById('google-list');
+
+const youtubeGrid = document.getElementById('youtube-grid');
+
+
+// Set up event listener for form submission
+
+searchForm.addEventListener('submit', (event) => {
+
+  event.preventDefault();
+
+  const query = searchBox.value;
+
+  searchGoogle(query);
+
+  searchYouTube(query);
+
+  searchBox.value = '';
+
+});
+
+
+// Function to search Google and display results
+
+function searchGoogle(query) {
+
+  const googleAPIKey = 'AIzaSyBUeGbzuzLy-fmiP1hm3lZikE9GKvMt9rA';
+
+  const googleSearchEngineID = '570d509947eb14ded';
+
+  const googleAPIURL = `https://www.googleapis.com/customsearch/v1?key=${googleAPIKey}&cx=${googleSearchEngineID}&q=${query}`;
+
+
+  fetch(googleAPIURL)
+
+    .then(response => response.json())
+
+    .then(data => {
+
+      const items = data.items.slice(0, 5);
+
+      googleList.innerHTML = '';
+
+      items.forEach(item => {
+
+        const li = document.createElement('li');
+
+        const link = document.createElement('a');
+
+        const title = document.createElement('h3');
+
+        const description = document.createElement('p');
+
+        link.href = item.link;
+
+        link.target = '_blank';
+
+        title.textContent = item.title;
+
+        description.textContent = item.snippet;
+
+        link.appendChild(title);
+
+        link.appendChild(description);
+
+        li.appendChild(link);
+
+        googleList.appendChild(li);
+
+      });
+
+    })
+
+    .catch(error => console.log(error));
+
+}
+
+
+// Function to search YouTube and display results
+
+function searchYouTube(query) {
+
+  const youtubeAPIKey = 'AIzaSyBS-lfv-Dk9Ou2MOGLN7wE7SbeFaaTrv1o';
+
+  const youtubeAPIURL = `https://www.googleapis.com/youtube/v3/search?key=${youtubeAPIKey}&q=${query}&part=snippet&type=video&maxResults=6`;
+
+
+  fetch(youtubeAPIURL)
+
+    .then(response => response.json())
+
+    .then(data => {
+
+      const items = data.items;
+
+      youtubeGrid.innerHTML = '';
+
+      items.forEach(item => {
+
+        const div = document.createElement('div');
+
+        const link = document.createElement('a');
+
+        const img = document.createElement('img');
+
+        const playBtn = document.createElement('div');
+
+        div.classList.add('youtube-item');
+
+        link.href = `https://www.youtube.com/watch?v=${item.id.videoId}`;
+
+        link.target = '_blank';
+
+        img.src = item.snippet.thumbnails.medium.url;
+
+        playBtn.innerHTML = '&#9658;';
+
+        playBtn.classList.add('play-btn');
+
+        link.appendChild(img);
+
+        link.appendChild(playBtn);
+
+        div.appendChild(link);
+
+        youtubeGrid.appendChild(div);
+
+      });
+
+    })
+
+    .catch(error => console.log(error));
+
+}
+
+
+  </script>
+
+  <hr>
+
+  <script src="script.js"></script>
+
+</body>
+
+<style>
+
+.container {
+
+  max-width: 500px;
+
+  margin: 0 auto;
+
+  text-align: center;
+
+}
+
+
+h1 {
+
+  font-size: 2em;
+
+}
+
+
+input[type="text"] {
+
+  width: 70%;
+
+  padding: 12px 20px;
+
+  margin: 8px 0;
+
+  box-sizing: border-box;
+
+  border: 2px solid #ccc;
+
+  border-radius: 4px;
+
+  background-color: #f8f8f8;
+
+  font-size: 1.2em;
+
+}
+
+
+button {
+
+  background-color: #021C39;
+
+  color: white;
+
+  padding: 14px 20px;
+
+  margin: 8px 0;
+
+  border: none;
+
+  border-radius: 4px;
+
+  cursor: pointer;
+
+  font-size: 1.2em;
+
+}
+
+
+button:hover {
+
+  background-color: #4c9e9e;
+
+}
+
+
+h2 {
+
+  font-size: 1.5em;
+
+}
+
+
+p {
+
+  font-size: 1.2em;
+
+}
+
+</style>
+
+<script>
+
+async function search() {
+
+  // Get the user's search query
+
+  const query = document.getElementById("search-box").value.toLowerCase();
+
+
+  // Define the predefined questions and answers
+
+  const predefinedQuestions = [
+
+    "data structure",
+
+    "dsa",
+
+    "dbms",
+
+    "se or software engineering",
+
+    "oops",
+
+    "database",
+
+    "database management system",
+
+    "os or operating system",
+
+    "sn or computer network",
+
+    "wt or web technology",
+
+    "ai",
+
+    "artificial intelligence",
+
+    "ml or machine learning",
+
+    "aiml or artificial intelligence machine learning",
+
+    "sql",
+
+    "cloud computing",
+
+    "mysql",
+
+    "CSE or Computer Science and Engineering",
+
+  ];
+
+  const predefinedAnswers = [
+
+    "A data structure is a way of organizing and storing data in a computer so that it can be accessed and manipulated efficiently. It defines a particular way of organizing data in memory and provides operations or methods for accessing and modifying that data. Some common examples of data structures include arrays, linked lists, stacks, queues, trees, and graphs. ",
+
+    "DSA stands for Data Structures and Algorithms. It refers to the study of how to organize and manipulate data effectively, as well as how to design algorithms that can efficiently process that data. DSA is a fundamental topic in computer science and is essential for anyone who wants to develop software or work in the field of computer science. The study of DSA covers a wide range of topics, including data structures such as arrays, linked lists, trees, and graphs, as well as algorithms for sorting, searching, and manipulating data. The goal of studying DSA is to learn how to write efficient and effective code that can solve complex problems in a timely manner.",
+
+    "DBMS stands for Database Management System. It is a software system that allows users to create, manage, and manipulate databases. A database is a collection of data that is organized in a specific way, making it easy to search, retrieve, and manage. A DBMS provides a way to store, organize, and retrieve data in an efficient and secure manner. It typically includes tools for defining the structure of the database, specifying constraints on the data, and manipulating the data using queries and other operations. Some common examples of DBMSs include MySQL, Oracle, Microsoft SQL Server, and PostgreSQL. The use of a DBMS is essential in modern software development, as it provides a powerful and flexible way to store and manage large amounts of data.",
+
+    "Software engineering is the process of designing, creating, testing, and maintaining software in a systematic and disciplined manner. It involves applying engineering principles and methods to software development to ensure that the software is reliable, efficient, and maintainable. Software engineering is a multi-disciplinary field that encompasses various areas such as computer science, mathematics, project management, and communication skills.",
+
+    "OOPs stands for Object-Oriented Programming. It is a programming paradigm based on the concept of objects, which are instances of classes that encapsulate data and behavior. OOPs emphasizes on the organization of code into objects, which can interact with each other to accomplish tasks.The main concepts of OOPs are encapsulation, inheritance, and polymorphism",
+
+    "A database is an organized collection of data, typically stored in a computer, that is designed to be easily accessed, managed, and updated. Databases are used in a wide range of applications, from small desktop applications to large enterprise systems.",
+
+    "It is a software system that allows users to create, manage, and manipulate databases. A database is a collection of data that is organized in a specific way, making it easy to search, retrieve, and manage. A DBMS provides a way to store, organize, and retrieve data in an efficient and secure manner. It typically includes tools for defining the structure of the database, specifying constraints on the data, and manipulating the data using queries and other operations. Some common examples of DBMSs include MySQL, Oracle, Microsoft SQL Server, and PostgreSQL. The use of a DBMS is essential in modern software development, as it provides a powerful and flexible way to store and manage large amounts of data.",
+
+    "An operating system (OS) is a software program that manages computer hardware and software resources and provides common services for computer programs. The OS acts as an interface between the computer hardware and software applications, controlling and coordinating the activities and sharing resources such as CPU, memory, and storage.",
+
+    "A computer network is a group of interconnected computers and devices that are able to communicate with each other and share resources. The network allows devices to communicate with each other using a variety of communication protocols, such as TCP/IP, HTTP, and FTP.",
+
+    "Web technology refers to the technologies and tools used for creating, managing, and delivering web-based applications and services. These technologies include programming languages, databases, web servers, web frameworks, and client-side technologies such as HTML, CSS, and JavaScript",
+
+    "AI, or artificial intelligence, refers to the simulation of human intelligence in machines that are programmed to think and act like humans. AI involves the development of algorithms and software that can perform tasks that would typically require human intelligence, such as perception, reasoning, learning, decision-making, and natural language processing.",
+
+    "AI, or artificial intelligence, refers to the simulation of human intelligence in machines that are programmed to think and act like humans. AI involves the development of algorithms and software that can perform tasks that would typically require human intelligence, such as perception, reasoning, learning, decision-making, and natural language processing.",
+
+    "Machine learning (ML) is a subset of artificial intelligence (AI) that involves the development of algorithms and models that can learn from data and improve their performance over time without being explicitly programmed. ML algorithms are designed to identify patterns and relationships within large datasets, and use these patterns to make predictions or decisions.There are three main types of machine learning: Supervised learning:, unSupervised learning: and Reinforcement learning:",
+
+    "AIML stands for Artificial Intelligence and Machine Learning. It refers to the combination of two fields, artificial intelligence and machine learning, to create intelligent systems that can learn from data and make decisions or predictions without being explicitly programmed.",
+
+    "SQL stands for Structured Query Language, and it is a programming language used to manage and manipulate relational databases. SQL is used to insert, update, delete, and retrieve data from a database, as well as to create and modify database structures such as tables, views, and indexes.",
+
+    "Cloud computing is a model for delivering computing resources over the internet, such as servers, storage, applications, and other services. It allows users to access these resources on-demand, without the need for physical hardware or infrastructure on their own premises.",
+
+    "MySQL is an open-source relational database management system (RDBMS) that uses SQL (Structured Query Language) to manage and manipulate data. MySQL is widely used and is considered one of the most popular open-source database management systems in the world.",
+
+    "CSE stands for Computer Science and Engineering. It is an academic field that combines principles from computer science and engineering to design, develop, and analyze computer software and hardware systems. Computer Science focuses on the theoretical aspects of computing, including algorithms, data structures, programming languages, and computer architecture. Computer Engineering, on the other hand, combines principles from computer science and electrical engineering to design and develop computer hardware systems.",
+
+  ];
+
+
+  // Use NLP to match one or two words from the user's query to the predefined questions
+
+  let matchingQuestions = [];
+
+  for (let i = 0; i < predefinedQuestions.length; i++) {
+
+    const questionWords = predefinedQuestions[i].toLowerCase().split(" ");
+
+    for (let j = 0; j < questionWords.length; j++) {
+
+      if (query.includes(questionWords[j])) {
+
+        matchingQuestions.push({
+
+          question: predefinedQuestions[i],
+
+          count: 1,
+
+        });
+
+        for (let k = j + 1; k < questionWords.length; k++) {
+
+          if (query.includes(questionWords[k])) {
+
+            let existingQuestion = matchingQuestions.find(
+
+              (q) => q.question === predefinedQuestions[i]
+
+            );
+
+            if (existingQuestion) {
+
+              existingQuestion.count++;
+
+            } else {
+
+              matchingQuestions.push({
+
+                question: predefinedQuestions[i],
+
+                count: 2,
+
+              });
+
+            }
+
+            break;
+
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+
+  // If at least one matching question is found, display the most relevant answer
+
+  if (matchingQuestions.length > 0) {
+
+    matchingQuestions.sort((a, b) => b.count - a.count);
+
+    const mostRelevantQuestion = matchingQuestions[0].question;
+
+    const index = predefinedQuestions.indexOf(mostRelevantQuestion);
+
+    const answer = predefinedAnswers[index];
+
+    document.getElementById("answer-heading").innerHTML = "Your answer:";
+
+    document.getElementById("answer-text").innerHTML = answer;
+
+    document.getElementById("error-message").innerHTML = "";
+
+  } else {
+
+    document.getElementById("answer-heading").innerHTML = "";
+
+    document.getElementById("answer-text").innerHTML = "";
+
+    document.getElementById("error-message").innerHTML =
+
+      "Sorry, I couldn't find an answer to your question.";
+
+  }
+
+}
+
+
+</script>
+
+</div>
+
+ <hr>
+
+ <footer style="background-color: #021C39; border-radius: 15PX; height: auto; width: 100%;">
+
+        <div>
+
+              <div class="footercontainer" style="color: white;">
+
+                <div class="aa1">
+
+                    <h3 style="color: white;">DEVELOPED BY</h3>
+
+<table>
+
+ <tr>
+
+    <td><img alt="19WJ1A05M6" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgJErF6CBBYHfwDlO8S3TPq-jN97GQscbvEEv1wukyyKc_G2otRKFAwaD7ucbzV2IrvLMD5c7NaMkAlllnfppUpqIJllVj7-eRKMkjA3RDXdJu4R-E-WBZ-drwFm1YN3c_-oUHXsN9JCoq8uumLQreqg99JTzilEhklDPVL7p9j7PXc9_prITgZbVjZhA/w200-h200/19WJ1A05M6.jpg" style="border-radius: 20%; height: 50px; width: 50px;" /></td>
+
+    <td>
+
+      <h3 style="color: white;">19WJ1A05M6 - Shyam</h3>
+
+    </td>
+
+  </tr>
+
+  <tr>
+
+    <td><img alt="19WJ1A05N2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiJuMuNfJVrBjoAoAz85Lr7dqAr_f6wVFUHCC2D81JhjRbnUGKZZDbG4QxMERG1iLz9mtxRILi1qWv-JwWTiU_HieyBftqfry3plwMlQd7PjnvkD7Pw2ImlwODkwcRIp-rmeyUgsZe6Uqw2bH4-GcpYXsuLC8jyRxj4h_HnPEEpE8GsQPyB2cPgTX7zVg/w200-h200/19WJ1A05N2.jpg" style="border-radius: 20%; height: 50px; width: 50px;" /></td>
+
+    <td>
+
+      <h3 style="color: white;">19WJ1A05N2 - Pavani</h3>
+
+    </td>
+
+  </tr>
+
+ <tr>
+
+    <td><img alt="19WJ1A05N8" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhE7o6Jn9ohYcGCcKYd8LSoju-7e3_H0lkowV-10w87K-GVCKnLYpEx3i3Xb4VF8SHUSFLVPUAjXyD-cmtubfofx5fl-Rw2GMaUYGL9Ryj05bPnf4msgpsUsJr6bnCJdBUGeL5AVD0gserxQWR2mXwRGNJRSfwxaIdFFLKfH0tApBHCjeXtH5HHoIwh0A/w200-h200/19WJ1A05N8.jpg" style="border-radius: 20%; height: 50px; width: 50px;" /></td>
+
+    <td>
+
+      <h3 style="color: white;">19WJ1A05N8 - Priyabrata</h3>
+
+    </td>
+
+  </tr>
+
+</table>
+
+</div>
+
+                <div class="aa2">
+
+                    <h3 style="color: white;">GUIDANCE</h3>
+
+<h3 style="color: white;">INTERNAL GUIDE</h3>
+
+<table>
+
+ <tr>
+
+    <td><img alt="DEVASEKHAR" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgXgKlNZTIYBV9VetSZwO5PdnRsZWLxm39Wz6bAb7DLwrCP3ApRE9YjnJbS7rSw1Q6Kq9ar7G_Q2ibKvPfhP88Xb-7Xxmmu9huKEoIh8Y-wFqwiiBaokACHTX9la97akP64uWKSakXqNxOJJiI1VNAWQUHJ3z3U9u4ryKqZcdJi5kYcjjEwwRxrULRN3Q/w200-h200/HOD%20CSE.jpg" style="border-radius: 20%; height: 50px; width: 50px;" /></td>
+
+    <td>
+
+      <h3 style="color: white;">Mr.V.DEVASEKHAR</h3>
+
+    </td>
+
+  </tr></table>
+
+  <h3 style="color: white;">PROJECT CO-ORDINATOR</h3>
+
+<table>
+
+ <tr>
+
+    <td><img alt="SWATHI" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhwenIur0C6lYb3c7Lj0JGDxWGgqE_FhAqHJKeHdVKJllh6NT93zdkP3gIlfAk9ME0UUhuTQPiKnett2vkmNBWv6xgZsVY_hbtM0s8KCgJT2rxrIuc5l00KnpGknVz5h-sYoB1zxq-AR4kBCtM1ago5u0Ngtys0lsLdol04GvIsGTLjerBFSqr7RSpQ5A/s1600/WhatsApp%20Image%202023-04-04%20at%204.29.21%20PM.jpeg" style="border-radius: 20%; height: 50px; width: 50px;" /></td>
+
+    <td>
+
+      <h3 style="color: white;">Mrs.V.SWATHI</h3>
+
+    </td>
+
+  </tr></table>
+
+</div>
+
+                <div class="aa3">
+
+                    <h3 style="color: white;">HOD CSE</h3>
+
+<table>
+
+ <tr>
+
+    <td><img alt="19WJ1A05M6" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgXgKlNZTIYBV9VetSZwO5PdnRsZWLxm39Wz6bAb7DLwrCP3ApRE9YjnJbS7rSw1Q6Kq9ar7G_Q2ibKvPfhP88Xb-7Xxmmu9huKEoIh8Y-wFqwiiBaokACHTX9la97akP64uWKSakXqNxOJJiI1VNAWQUHJ3z3U9u4ryKqZcdJi5kYcjjEwwRxrULRN3Q/w200-h200/HOD%20CSE.jpg" style="border-radius: 20%; height: 50px; width: 50px;" /></td>
+
+    <td>
+
+      <h3 style="color: white;">Mr.V.DEVASEKHAR</h3>
+
+    </td>
+
+  </tr></table>
+
+  <a href="https://www.gniindia.org/" style="color: red; text-decoration: none;" target="blank"><b>GURUNANAK INSTITUTE OF TECHNICAL CAMPUS</b></a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+<style>
+
+    .footercontainer{display: flex; padding: 5px; justify-content: space-around; flex-wrap: wrap;}
+
+    .footercontainer div{ margin: 5px;}
+
+    .aa1{flex: 1;}
+
+    .aa2{flex: 1;}
+
+    .aa3{flex: 1;}
+
+@media(max-width:650px){.container{flex-direction: column;}}
+
+</style>
+
+<style>
+
+/* UTILITIES */
+
+
+* {
+
+margin: 0;
+
+padding: 0;
+
+box-sizing: border-box;
+
+}
+
+body {
+
+font-family: cursive;
+
+
+}
+
+a {
+
+text-decoration: none;
+
+}
+
+li {
+
+list-style: none;
+
+}
+
+.navbar {
+
+display: flex;
+
+align-items: center;
+
+justify-content: space-between;
+
+padding: 20px;
+
+background-color: #021C39;
+
+color: #fff;
+
+}
+
+.nav-links a {
+
+color: #fff;
+
+}
+
+/* LOGO */
+
+.logo {
+
+font-size: 32px;
+
+}
+
+/* NAVBAR MENU */
+
+.menu {
+
+display: flex;
+
+gap: 1em;
+
+font-size: 18px;
+
+}
+
+.menu li:hover {
+
+background-color: #4c9e9e;
+
+border-radius: 5px;
+
+transition: 0.3s ease;
+
+}
+
+.menu li {
+
+padding: 5px 14px;
+
+}
+
+.services {
+
+position: relative;
+
+}
+
+.services:hover .dropdown {
+
+display: block;
+
+}
+
+/*RESPONSIVE NAVBAR MENU STARTS*/
+
+/* CHECKBOX HACK */
+
+input[type=checkbox]{
+
+display: none;
+
+}
+
+
+.hamburger {
+
+display: none;
+
+font-size: 24px;
+
+user-select: none;
+
+}
+
+/* APPLYING MEDIA QUERIES */
+
+@media (max-width: 768px) {
+
+.menu {
+
+display:none;
+
+position: absolute;
+
+background-color:#021C39;
+
+right: 0;
+
+left: 0;
+
+text-align: center;
+
+padding: 16px 0;
+
+}
+
+.menu li:hover {
+
+display: inline-block;
+
+background-color:#4c9e9e;
+
+transition: 0.3s ease;
+
+}
+
+.menu li + li {
+
+margin-top: 12px;
+
+}
+
+input[type=checkbox]:checked ~ .menu{
+
+display: block;
+
+}
+
+.hamburger {
+
+display: block;
+
+}
+
+.dropdown {
+
+left: 50%;
+
+top: 30px;
+
+transform: translateX(35%);
+
+}
+
+.dropdown li:hover {
+
+background-color: #4c9e9e;
+
+}
+
+}
+
+</style>
+
+
+</body>
+
+</html>
+
+
